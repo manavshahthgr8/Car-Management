@@ -4,28 +4,51 @@ const apiUrl = 'http://localhost:5000/api'; // Change this to your backend API U
 let token = localStorage.getItem('token'); // Retrieve the JWT token from local storage
 
 // 1. Login functionality
-document.getElementById('login-form')?.addEventListener('submit', async function (e) {
-    e.preventDefault();
+// app.js
 
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
+const body = document.body;
+const loginBox = document.querySelector(".login-box");
+const h1 = document.getElementsByTagName("h1")[0];
+const inputs = document.querySelectorAll("input");
+const loginButton = document.getElementById("login-button");
+const h2 = document.getElementsByTagName("h2")[0];
 
-    const response = await fetch(`${apiUrl}/users/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    });
+// Switch between light and dark mode
+function switchTheme() {
+  loginBox.classList.toggle("dark-mode");
+  body.classList.toggle("dark-mode");
+  h1.classList.toggle("dark-mode");
+  inputs.forEach(input => {
+    input.classList.toggle("dark-mode");
+  });
+  loginButton.classList.toggle("dark-mode");
+  h2.classList.toggle("dark-mode");
+}
 
-    const data = await response.json();
+// Handle the login form submission
+document.getElementById('login-form').addEventListener('submit', async function (e) {
+  e.preventDefault(); // Prevent the default form submission
 
-    if (data.token) {
-        localStorage.setItem('token', data.token); // Store JWT in local storage
-        window.location.href = 'product-list.html'; // Redirect to product list page
-    } else {
-        alert('Login failed');
-    }
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  // Make API request to login
+  const response = await fetch('http://localhost:5000/api/users/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await response.json();
+
+  if (data.token) {
+    localStorage.setItem('token', data.token); // Store JWT in localStorage
+    window.location.href = 'product-list.html'; // Redirect to the product list page
+  } else {
+    alert(data.error || 'Login failed');
+  }
 });
 
 // 2. Signup functionality
