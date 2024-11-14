@@ -7,7 +7,6 @@ let token = localStorage.getItem('token'); // Retrieve the JWT token from local 
 const body = document.body;
 const loginBox = document.querySelector(".login-box");
 const signupsection = document.querySelector(".signup-section");
-const nsignupsection = document.querySelector(".nsignup-section");
 const p = document.getElementsByTagName("p")[0];
 const h1 = document.getElementsByTagName("h1")[0];
 const inputs = document.querySelectorAll("input");
@@ -20,7 +19,6 @@ const h2 = document.getElementsByTagName("h2")[0];
 function switchTheme() {
   loginBox.classList.toggle("dark-mode");
   signupsection.classList.toggle("dark-mode");
-  nsignupsection.classList.toggle("dark-mode");
   body.classList.toggle("dark-mode");
   h1.classList.toggle("dark-mode");
   p.classList.toggle("dark-mode");

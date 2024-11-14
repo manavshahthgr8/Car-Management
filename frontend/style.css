@@ -51,14 +51,7 @@ body.dark-mode {
 .signup-section p {
     color: #232c3d;
 }
-.nsignup-section p {
-    color: #232c3d;
-}
-
 .signup-section p.dark-mode {
-    color: white;
-}
-.nsignup-section p.dark-mode {
     color: white;
 }
 
@@ -195,10 +188,6 @@ h2.dark-mode::before {
   text-align: center;
   margin-top: 20px;
 }
-.nsignup-section {
-    text-align: center;
-    margin-top: 20px;
-  }
 
 .signup-button {
   width: 50%;
