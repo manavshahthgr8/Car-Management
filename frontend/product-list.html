@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cars - Product List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Car Management</h1>
+        <div id="search-bar">
+            <input type="text" id="search-input" placeholder="Search for cars..." onkeyup="searchProducts()">
+        </div>
+
+        <div id="product-list">
+            <!-- Products will be dynamically loaded here -->
+        </div>
+
+        <div>
+            <button onclick="window.location.href='product-create.html'">Add New Car</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

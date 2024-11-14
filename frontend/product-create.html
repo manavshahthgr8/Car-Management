@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Car</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create a New Car</h1>
+        <form id="create-product-form">
+            <input type="text" id="product-title" placeholder="Car Title" required />
+            <textarea id="product-description" placeholder="Car Description" required></textarea>
+            <input type="text" id="product-tags" placeholder="Tags (e.g. Sedan, BMW, 2023)" />
+            <input type="file" id="product-images" multiple required />
+            <button type="submit">Create Car</button>
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
