@@ -5,223 +5,255 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Car Management</title>
   <style>
-    /* Basic Styles */
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;700&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Jost', sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f7f9fc;
     }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       background-color: #333;
       color: white;
-      padding: 10px 20px;
+      padding: 15px 20px;
     }
+
     header h1 {
-      font-size: 1.2em;
+      margin: 0;
+      font-size: 1.5em;
     }
-    header .username {
-      font-weight: normal;
-    }
+
     header .logout {
       cursor: pointer;
-      padding: 5px 10px;
+      padding: 8px 15px;
       background-color: red;
       color: white;
       border: none;
       border-radius: 5px;
     }
+
     .container {
       padding: 20px;
     }
+
     .search-add {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       margin-bottom: 20px;
     }
-    .search-container {
-      display: flex;
-      align-items: center;
-    }
+
     .search-bar {
       width: 300px;
-      padding: 5px;
+      padding: 8px;
+      font-size: 14px;
     }
+
+    .search-button, .add-button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
     .search-button {
-      padding: 6px 10px;
-      margin-left: 5px;
       background-color: #555;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 3px;
+      margin-left: 5px;
     }
+
     .add-button {
-      padding: 5px 10px;
       background-color: green;
-      color: white;
-      border: none;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card h3 {
+      margin: 10px 0;
+    }
+
+    .card p {
+      color: #555;
+    }
+
+    .card button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 14px;
       cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #63c4ff;
+      color: white;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin: 0;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
       border-radius: 5px;
     }
-    .product-list {
-      border: 1px solid black;
-      padding: 10px;
-    }
-    .product-list h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .product-item {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-    .product-item:last-child {
-      border-bottom: none;
-    }
-    .product-item div {
-      flex: 1;
-    }
-    .product-item .actions {
-      display: flex;
-      gap: 10px;
-    }
-    .page-controls {
-      text-align: center;
-      margin-top: 20px;
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Car Management | <span id="username">Hi User!</span></h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
 
-<header>
-  <h1>Car Management | <span class="username" id="username">Hi User!</span></h1>
-  <button class="logout" onclick="logout()">Logout</button>
-</header>
-
-<div class="container">
-  <div class="search-add">
-    <div class="search-container">
-      <input type="text" id="search-bar" class="search-bar" placeholder="Search cars...">
-      <button class="search-button" onclick="searchCars()">Search</button>
+  <div class="container">
+    <div class="search-add">
+      <div>
+        <input type="text" id="search-bar" class="search-bar" placeholder="Search cars...">
+        <button class="search-button" onclick="searchCars()">Search</button>
+      </div>
+      <button class="add-button" onclick="addCar()">Add</button>
     </div>
-    <button class="add-button" onclick="addCar()">Add</button>
-  </div>
 
-  <div class="product-list">
-    <h2>Your Cars List</h2>
-    <div id="car-list">
-      <!-- Dynamic Car List will be rendered here -->
-    </div>
-    <div class="page-controls">
-      Page <span id="current-page">1</span>
-      <button onclick="nextPage()">→</button>
+    <div id="car-list" class="product-list">
+      <!-- Car cards will be dynamically rendered here -->
     </div>
   </div>
-</div>
 
-<script>
-  // Sample data for demonstration
-  let cars = [
-    { id: 1, title: 'Car 1', description: 'Description for Car 1', tags: ['SUV'], company: 'Company A', dealer: 'Dealer 1' },
-    { id: 2, title: 'Car 2', description: 'Description for Car 2', tags: ['Sedan'], company: 'Company B', dealer: 'Dealer 2' },
-    { id: 3, title: 'Car 3', description: 'Description for Car 3', tags: ['Convertible'], company: 'Company C', dealer: 'Dealer 3' },
-    { id: 4, title: 'Car 4', description: 'Description for Car 4', tags: ['Truck'], company: 'Company D', dealer: 'Dealer 4' }
-  ];
-  let currentPage = 1;
+  <!-- Modal -->
+  <div id="car-modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div class="carousel">
+        <img id="modal-image" src="" alt="Car Image">
+      </div>
+      <h2 id="modal-title">Car Name</h2>
+      <p id="modal-description">Description</p>
+      <p><strong>Type:</strong> <span id="modal-type"></span></p>
+      <p><strong>Dealer:</strong> <span id="modal-dealer"></span></p>
+      <p><strong>Fuel:</strong> <span id="modal-fuel"></span></p>
+    </div>
+  </div>
 
-  // Function to fetch username (simulating a database fetch)
-  function fetchUsername() {
-    // Simulate fetching user data from database
-    let username = "John Doe"; // This could come from an API call
-    if (!username) {
-      username = "User"; // Default value if username is not found
+  <script>
+    let cars = [
+      { id: 1, name: 'Toyota Corolla', type: 'Sedan', description: 'A reliable and efficient car.', dealer: 'Dealer A', fuel: 'Petrol', images: ['https://via.placeholder.com/600'] },
+      { id: 2, name: 'Tesla Model 3', type: 'Electric', description: 'An all-electric sedan with advanced features.', dealer: 'Dealer B', fuel: 'Electric', images: ['https://via.placeholder.com/600'] },
+      { id: 3, name: 'Ford F-150', type: 'Truck', description: 'A powerful and durable truck.', dealer: 'Dealer C', fuel: 'Diesel', images: ['https://via.placeholder.com/600'] },
+      { id: 4, name: 'Toyota Corolla', type: 'Sedan', description: 'A reliable and efficient car.', dealer: 'Dealer A', fuel: 'Petrol', images: ['https://via.placeholder.com/600'] }
+
+    ];
+
+    function renderCarList() {
+      const carList = document.getElementById('car-list');
+      carList.innerHTML = '';
+      cars.forEach(car => {
+        carList.innerHTML += `
+          <div class="card">
+            <h3>${car.name}</h3>
+            <p>${car.type}</p>
+            <button onclick="viewCar(${car.id})">View</button>
+          </div>
+        `;
+      });
     }
-    document.getElementById('username').innerText = `Hi ${username}!`;
-  }
 
-  // Call fetchUsername on page load
-  window.onload = fetchUsername;
+    function viewCar(id) {
+      const car = cars.find(car => car.id === id);
+      if (car) {
+        document.getElementById('modal-title').innerText = car.name;
+        document.getElementById('modal-description').innerText = car.description;
+        document.getElementById('modal-type').innerText = car.type;
+        document.getElementById('modal-dealer').innerText = car.dealer;
+        document.getElementById('modal-fuel').innerText = car.fuel;
+        document.getElementById('modal-image').src = car.images[0];
+        document.getElementById('car-modal').style.display = 'flex';
+      }
+    }
 
-  // Function to render car list
-  function renderCarList() {
-    const carList = document.getElementById('car-list');
-    carList.innerHTML = '';
+    function closeModal() {
+      document.getElementById('car-modal').style.display = 'none';
+    }
 
-    cars.forEach(car => {
-      carList.innerHTML += `
-        <div class="product-item">
-          <div>${car.title}, ${car.description}</div>
-          <div class="actions">
+    function searchCars() {
+      const query = document.getElementById('search-bar').value.toLowerCase();
+      const filteredCars = cars.filter(car => car.name.toLowerCase().includes(query) || car.type.toLowerCase().includes(query));
+      renderFilteredCarList(filteredCars);
+    }
+
+    function renderFilteredCarList(filteredCars) {
+      const carList = document.getElementById('car-list');
+      carList.innerHTML = '';
+      filteredCars.forEach(car => {
+        carList.innerHTML += `
+          <div class="card">
+            <h3>${car.name}</h3>
+            <p>${car.type}</p>
             <button onclick="viewCar(${car.id})">View</button>
-            <button onclick="editCar(${car.id})">Edit</button>
           </div>
-        </div>
-      `;
-    });
-  }
+        `;
+      });
+    }
 
-  // Function to search cars based on input
-  function searchCars() {
-    const query = document.getElementById('search-bar').value.toLowerCase();
-    const filteredCars = cars.filter(car =>
-      car.title.toLowerCase().includes(query) ||
-      car.description.toLowerCase().includes(query) ||
-      car.tags.some(tag => tag.toLowerCase().includes(query))
-    );
+    function addCar() {
+      alert('Redirecting to add car form...');
+      window.location.href = 'product-create.html';
+    }
 
-    const carList = document.getElementById('car-list');
-    carList.innerHTML = '';
+    function logout() {
+      alert('Logging out...');
+      window.location.href = 'index.html';
+    }
 
-    filteredCars.forEach(car => {
-      carList.innerHTML += `
-        <div class="product-item">
-          <div>${car.title}, ${car.description}</div>
-          <div class="actions">
-            <button onclick="viewCar(${car.id})">View</button>
-            <button onclick="editCar(${car.id})">Edit</button>
-          </div>
-        </div>
-      `;
-    });
-  }
-
-  // Placeholder functions for add, view, edit, delete
-  function addCar() {
-    alert('Navigate to add car form');
-    // Redirect to car creation page
-    window.location.href = 'product-create.html';
-  }
-
-  function viewCar(id) {
-    alert(`Viewing details for Car ID: ${id}`);
-    // Redirect to car detail page
-  }
-
-  function editCar(id) {
-    alert(`Editing Car ID: ${id}`);
-    // Redirect to car edit form
-  }
-
-  function nextPage() {
-    currentPage++;
-    document.getElementById('current-page').innerText = currentPage;
-    // Implement pagination logic
-  }
-
-  function logout() {
-    alert('Logging out...');
-    window.location.href = 'index.html'; // Redirect to index page
-  }
-
-  // Initial render of car list
-  renderCarList();
-</script>
-
+    renderCarList();
+  </script>
 </body>
 </html>
