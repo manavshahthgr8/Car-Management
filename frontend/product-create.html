@@ -1,23 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Car</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Your Car</title>
+  
+  <style>
+    /* Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;700&display=swap');
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 1.3em;
+      margin: 0;
+    }
+
+    header .username {
+      font-weight: normal;
+      color: #63c4ff;
+    }
+
+    header .logout,
+    header .home-button {
+      padding: 8px 12px;
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-left: 10px; /* Space between the buttons */
+    }
+
+    header .logout:hover,
+    header .home-button:hover {
+      background-color: #c9302c;
+    }
+
+    .form-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .form-container form {
+      width: 100%;
+      max-width: 600px;
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .form-group select,
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      padding: 3px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .form-group input[type="file"] {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #63c4ff;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      grid-column: 1 / 3;
+      background-color: #63c4ff;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #43a0da;
+    }
+
+    /* Add media query for responsiveness */
+    @media (max-width: 768px) {
+      .form-container form {
+        grid-template-columns: 1fr; /* Stack the form fields one after another */
+        padding: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px; /* Add some space between fields */
+      }
+
+      button[type="submit"] {
+        grid-column: 1; /* Make the submit button span the full width */
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Create a New Car</h1>
-        <form id="create-product-form">
-            <input type="text" id="product-title" placeholder="Car Title" required />
-            <textarea id="product-description" placeholder="Car Description" required></textarea>
-            <input type="text" id="product-tags" placeholder="Tags (e.g. Sedan, BMW, 2023)" />
-            <input type="file" id="product-images" multiple required />
-            <button type="submit">Create Car</button>
-        </form>
-    </div>
+    <header>
+        <h1>Car Management | <span class="username" id="username">Hi User!</span></h1>
+        <div>
+          <button class="home-button" onclick="goHome()">Home</button>
+          <button class="logout" onclick="logout()">Logout</button>
+        </div>
+      </header>
+    
 
-    <script src="app.js"></script>
+  <div class="form-container">
+    <form id="add-car-form">
+      <div class="form-group">
+        <label for="car-name">Car Name</label>
+        <input type="text" id="car-name" placeholder="Enter car name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="car-type">Car Type</label>
+        <select id="car-type" required>
+          <option value="">Select Car Type</option>
+          <option value="sedan">Sedan</option>
+          <option value="suv">SUV</option>
+          <option value="hatchback">Hatchback</option>
+          <!-- Add more car types as needed -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="dealer-name">Dealer Name</label>
+        <input type="text" id="dealer-name" placeholder="Enter dealer name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="fuel-type">Fuel Type</label>
+        <select id="fuel-type" required>
+          <option value="">Select Fuel Type</option>
+          <option value="petrol">Petrol</option>
+          <option value="diesel">Diesel</option>
+          <option value="electric">Electric</option>
+          <!-- Add more fuel types as needed -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Enter car description" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="car-images">Upload Images (Max 10)</label>
+        <input type="file" id="car-images" name="car-images[]" accept="image/*" multiple required>
+        <small>Choose up to 10 images</small>
+      </div>
+
+      <button type="submit" id="submit-button">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    // Function to clear the form fields after successful submission
+    function clearForm() {
+      document.getElementById('add-car-form').reset();
+    }
+
+    // Function to handle logout
+    function logout() {
+      alert('Logging out...');
+      window.location.href = 'index.html';
+    }
+
+    // Function to navigate to the home page
+    function goHome() {
+      window.location.href = 'product-list.html'; // Replace with the actual home page URL
+    }
+
+    // Event listener for the form submission
+    document.getElementById('add-car-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevents the default form submission (page reload)
+
+      // Show success message
+      alert('Form submitted successfully!');
+
+      // Clear the form fields
+      clearForm();
+    });
+
+    // Event listener to restrict image uploads to a maximum of 10 images
+    document.getElementById("car-images").addEventListener("change", function(event) {
+      const files = event.target.files;
+      if (files.length > 10) {
+        alert("You can only upload up to 10 images.");
+        event.target.value = "";  // Clear the input
+      }
+    });
+  </script>
 </body>
 </html>

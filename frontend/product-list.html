@@ -1,27 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cars - Product List</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Management</title>
+  <style>
+    /* Basic Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+    }
+    header h1 {
+      font-size: 1.2em;
+    }
+    header .username {
+      font-weight: normal;
+    }
+    header .logout {
+      cursor: pointer;
+      padding: 5px 10px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .container {
+      padding: 20px;
+    }
+    .search-add {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .search-container {
+      display: flex;
+      align-items: center;
+    }
+    .search-bar {
+      width: 300px;
+      padding: 5px;
+    }
+    .search-button {
+      padding: 6px 10px;
+      margin-left: 5px;
+      background-color: #555;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .add-button {
+      padding: 5px 10px;
+      background-color: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .product-list {
+      border: 1px solid black;
+      padding: 10px;
+    }
+    .product-list h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .product-item:last-child {
+      border-bottom: none;
+    }
+    .product-item div {
+      flex: 1;
+    }
+    .product-item .actions {
+      display: flex;
+      gap: 10px;
+    }
+    .page-controls {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>My Car Management</h1>
-        <div id="search-bar">
-            <input type="text" id="search-input" placeholder="Search for cars..." onkeyup="searchProducts()">
-        </div>
 
-        <div id="product-list">
-            <!-- Products will be dynamically loaded here -->
-        </div>
+<header>
+  <h1>Car Management | <span class="username" id="username">Hi User!</span></h1>
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
 
-        <div>
-            <button onclick="window.location.href='product-create.html'">Add New Car</button>
-        </div>
+<div class="container">
+  <div class="search-add">
+    <div class="search-container">
+      <input type="text" id="search-bar" class="search-bar" placeholder="Search cars...">
+      <button class="search-button" onclick="searchCars()">Search</button>
     </div>
+    <button class="add-button" onclick="addCar()">Add</button>
+  </div>
 
-    <script src="app.js"></script>
+  <div class="product-list">
+    <h2>Your Cars List</h2>
+    <div id="car-list">
+      <!-- Dynamic Car List will be rendered here -->
+    </div>
+    <div class="page-controls">
+      Page <span id="current-page">1</span>
+      <button onclick="nextPage()">→</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sample data for demonstration
+  let cars = [
+    { id: 1, title: 'Car 1', description: 'Description for Car 1', tags: ['SUV'], company: 'Company A', dealer: 'Dealer 1' },
+    { id: 2, title: 'Car 2', description: 'Description for Car 2', tags: ['Sedan'], company: 'Company B', dealer: 'Dealer 2' },
+    { id: 3, title: 'Car 3', description: 'Description for Car 3', tags: ['Convertible'], company: 'Company C', dealer: 'Dealer 3' },
+    { id: 4, title: 'Car 4', description: 'Description for Car 4', tags: ['Truck'], company: 'Company D', dealer: 'Dealer 4' }
+  ];
+  let currentPage = 1;
+
+  // Function to fetch username (simulating a database fetch)
+  function fetchUsername() {
+    // Simulate fetching user data from database
+    let username = "John Doe"; // This could come from an API call
+    if (!username) {
+      username = "User"; // Default value if username is not found
+    }
+    document.getElementById('username').innerText = `Hi ${username}!`;
+  }
+
+  // Call fetchUsername on page load
+  window.onload = fetchUsername;
+
+  // Function to render car list
+  function renderCarList() {
+    const carList = document.getElementById('car-list');
+    carList.innerHTML = '';
+
+    cars.forEach(car => {
+      carList.innerHTML += `
+        <div class="product-item">
+          <div>${car.title}, ${car.description}</div>
+          <div class="actions">
+            <button onclick="viewCar(${car.id})">View</button>
+            <button onclick="editCar(${car.id})">Edit</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Function to search cars based on input
+  function searchCars() {
+    const query = document.getElementById('search-bar').value.toLowerCase();
+    const filteredCars = cars.filter(car =>
+      car.title.toLowerCase().includes(query) ||
+      car.description.toLowerCase().includes(query) ||
+      car.tags.some(tag => tag.toLowerCase().includes(query))
+    );
+
+    const carList = document.getElementById('car-list');
+    carList.innerHTML = '';
+
+    filteredCars.forEach(car => {
+      carList.innerHTML += `
+        <div class="product-item">
+          <div>${car.title}, ${car.description}</div>
+          <div class="actions">
+            <button onclick="viewCar(${car.id})">View</button>
+            <button onclick="editCar(${car.id})">Edit</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Placeholder functions for add, view, edit, delete
+  function addCar() {
+    alert('Navigate to add car form');
+    // Redirect to car creation page
+    window.location.href = 'product-create.html';
+  }
+
+  function viewCar(id) {
+    alert(`Viewing details for Car ID: ${id}`);
+    // Redirect to car detail page
+  }
+
+  function editCar(id) {
+    alert(`Editing Car ID: ${id}`);
+    // Redirect to car edit form
+  }
+
+  function nextPage() {
+    currentPage++;
+    document.getElementById('current-page').innerText = currentPage;
+    // Implement pagination logic
+  }
+
+  function logout() {
+    alert('Logging out...');
+    window.location.href = 'index.html'; // Redirect to index page
+  }
+
+  // Initial render of car list
+  renderCarList();
+</script>
+
 </body>
 </html>
