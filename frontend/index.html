@@ -9,11 +9,14 @@
 <body>
   <div class="login-box">
     <h1>Login</h1>
-    <form id="login-form">
+    <form id="login-form" onsubmit="loginUser(event)">
       <input type="email" id="login-email" placeholder="Email" required>
       <input type="password" id="login-password" placeholder="Password" required>
       <button type="submit" id="login-button">Login</button>
     </form>
+
+    <!-- Error message display -->
+    <div id="error-message" style="color: red; display: none; text-align: center;"></div>
 
     <!-- Centered line and "Sign Up" button -->
     <div class="signup-section">
@@ -23,6 +26,7 @@
     </div>
   </div>
 
+  <!-- Theme toggle -->
   <div class="theme-toggle">
     <h2></h2>
     <label class="switch">

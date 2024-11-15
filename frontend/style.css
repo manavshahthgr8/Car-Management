@@ -51,6 +51,7 @@ body.dark-mode {
 .signup-section p {
     color: #232c3d;
 }
+
 .signup-section p.dark-mode {
     color: white;
 }
@@ -175,7 +176,6 @@ h2.dark-mode::before {
   transform: translateX(26px);
 }
 
-/* Add the divider style */
 .divider {
   width: 80%;
   margin: 20px auto;
@@ -183,7 +183,6 @@ h2.dark-mode::before {
   border-top: 1px solid #ddd;
 }
 
-/* Style the "Sign Up" button */
 .signup-section {
   text-align: center;
   margin-top: 20px;
@@ -209,23 +208,24 @@ h2.dark-mode::before {
 .signup-button:focus {
   outline: none;
 }
+
 .login-button-signup {
-    width: 50%;
-    border: none;
-    background-color: #794bc4;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: 0.5s;
-  }
-  
-  .login-button-signup:hover {
-    background-color: #875ad1;
-  }
-  
-  .login-button-signup:focus {
-    outline: none;
-  }
+  width: 50%;
+  border: none;
+  background-color: #794bc4;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.login-button-signup:hover {
+  background-color: #875ad1;
+}
+
+.login-button-signup:focus {
+  outline: none;
+}
