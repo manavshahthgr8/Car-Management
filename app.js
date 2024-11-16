@@ -57,6 +57,10 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // Fallback route to serve index.html if no API match
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+<<<<<<< HEAD
+});
+=======
 });
 
 
+>>>>>>> 042baf74f6e9009a96e37c814180fa7235304dfe

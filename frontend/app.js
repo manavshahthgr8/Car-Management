@@ -23,6 +23,7 @@ async function loginUser(event) {
       if (response.status === 200) {
         // On successful login
         alert('Login successful!');
+        
         localStorage.setItem('token', data.token);  // Save JWT token to local storage
         localStorage.setItem('username', data.name);
         localStorage.setItem('uid',data.userId);

@@ -414,15 +414,13 @@ function toggleCarouselButtons() {
   
     // Delete a car and update the list
     async function deleteCar(id) {
-      const token = localStorage.getItem('token'); // Ensure the token is not null or undefined
-if (!token) {
-  alert('You are not authorized. Please log in again.');
-  window.location.href = 'index.html';
-  return;
-}
+  const token = localStorage.getItem('token'); // Get token from localStorage
 
-
-  console.log('Token:', token); // Debugging: Log the token being sent
+  if (!token) {
+    alert('You are not authorized. Please log in again.');
+    window.location.href = 'index.html'; // Redirect to login page
+    return;
+  }
 
   try {
     const response = await fetch(`/api/cars/${id}`, {
@@ -433,15 +431,13 @@ if (!token) {
       },
     });
 
-    console.log('Delete response:', response); // Debugging: Log the response object
-
     if (response.ok) {
       alert('Car deleted successfully!');
-      cars = cars.filter(car => car.car_id !== id); // Remove the deleted car from the array
+      cars = cars.filter(car => car.car_id !== id); // Remove from global array
       renderCarList(cars); // Re-render the car list
     } else {
       const errorData = await response.json();
-      console.error('Error deleting car:', errorData);
+      console.error('Error:', errorData);
       alert(`Failed to delete the car: ${errorData.message || 'Unknown error'}`);
     }
   } catch (error) {

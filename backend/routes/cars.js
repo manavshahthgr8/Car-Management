@@ -32,13 +32,9 @@ router.post("/", authenticate, (req, res) => {
   );
 });
 
-
-
-// Optional: Route to delete a car (if required)
-
 // Route to fetch cars added by the logged-in user
 router.get("/", authenticate, (req, res) => {
-  const userId = req.user.userId;  // Use userId instead of id
+  const userId = req.user.userId;  // Get userId from the token (which was decoded)
 
   db.query(
     "SELECT * FROM cars WHERE user_id = ?",
@@ -50,26 +46,17 @@ router.get("/", authenticate, (req, res) => {
   );
 });
 
-// Delete a car
+// Optional: Route to delete a car (if required)
 router.delete("/:id", authenticate, (req, res) => {
   const carId = req.params.id;
-  const userId = req.user.userId; // Use userId instead of id
-
-  console.log("Deleting car:", { carId, userId });
+  const userId = req.user.userId;
 
   db.query("DELETE FROM cars WHERE car_id = ? AND user_id = ?", [carId, userId], (err, results) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).send("Server error");
-    }
-    if (results.affectedRows === 0) {
-      console.log("No car found or unauthorized:", { carId, userId });
-      return res.status(404).send("Car not found or you're not authorized");
-    }
+    if (err) return res.status(500).send("Server error");
+    if (results.affectedRows === 0) return res.status(404).send("Car not found or you're not authorized");
     res.send("Car deleted successfully");
   });
 });
-
 
 // Get Specific Car
 router.get("/:id", authenticate, (req, res) => {

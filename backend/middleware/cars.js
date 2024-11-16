@@ -10,4 +10,8 @@ router.get('/cars', authMiddleware, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch cars' });
   }
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 042baf74f6e9009a96e37c814180fa7235304dfe
