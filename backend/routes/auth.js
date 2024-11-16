@@ -131,5 +131,25 @@ router.post('/add-car', (req, res) => {
     });
 });
 
+// Fetch cars by user_id
+router.get('/cars', async (req, res) => {
+  try {
+    // Extract the user_id from query or token (if using authentication)
+    const user_id = req.query.user_id;
+
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const [rows] = await pool.query('SELECT * FROM cars WHERE user_id = ?', [user_id]);
+    res.status(200).json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch cars' });
+  }
+});
+
+
+
 
 module.exports = router;  // Export the router

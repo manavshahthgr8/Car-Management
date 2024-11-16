@@ -34,7 +34,7 @@ async function loginUser(event) {
       }
     } catch (error) {
       console.error('Login Error:', error);
-      document.getElementById('error-message').innerText = 'Something went wrong. Please try again later.';
+      document.getElementById('error-message').innerText = 'Server is offline | Databse not connected. Please download & run on local host';
       document.getElementById('error-message').style.display = 'block';
     }
   }
@@ -82,7 +82,7 @@ document.getElementById('signup-form').addEventListener('submit', async function
       }
     } catch (error) {
       console.error('Error:', error);  // Log any errors in the console
-      alert('Something went wrong, please try again.');
+      alert('Server is offline | Databse not connected. Please download & run on local host');
     }
   });
   
