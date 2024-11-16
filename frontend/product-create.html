@@ -153,7 +153,7 @@
 </head>
 <body>
     <header>
-        <h1>Car Management | <span class="username" id="username">Hi User!</span></h1>
+      <h1>Car Management | <span id="username">Hi User!</span></h1>
         <div>
           <button class="home-button" onclick="goHome()">Home</button>
           <button class="logout" onclick="logout()">Logout</button>
@@ -211,6 +211,15 @@
   </div>
 
   <script>
+     // Update the header with the username
+   window.onload = function() {
+   const username = localStorage.getItem('username');
+  if (username) {
+    document.getElementById('username').innerText = `Hi ${username}!`;
+  } else {
+    document.getElementById('username').innerText = 'Hi User!';
+  }
+};
     // Function to clear the form fields after successful submission
     function clearForm() {
       document.getElementById('add-car-form').reset();
@@ -226,26 +235,46 @@
     function goHome() {
       window.location.href = 'product-list.html'; // Replace with the actual home page URL
     }
+    document.getElementById('add-car-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevents the default form submission
 
-    // Event listener for the form submission
-    document.getElementById('add-car-form').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevents the default form submission (page reload)
+    const formData = new FormData();
 
-      // Show success message
-      alert('Form submitted successfully!');
+    // Retrieve form values
+    const userId = localStorage.getItem('uid'); // Assuming user_id is stored in localStorage
+    formData.append('user_id', userId);
+    formData.append('car_name', document.getElementById('car-name').value);
+    formData.append('car_type', document.getElementById('car-type').value);
+    formData.append('dealer_name', document.getElementById('dealer-name').value);
+    formData.append('fuel_type', document.getElementById('fuel-type').value);
+    formData.append('description', document.getElementById('description').value);
 
-      // Clear the form fields
-      clearForm();
-    });
+    // Add images to FormData
+    const imageInput = document.getElementById('car-images');
+    for (let i = 0; i < imageInput.files.length; i++) {
+        formData.append('car-images', imageInput.files[i]);
+    }
 
-    // Event listener to restrict image uploads to a maximum of 10 images
-    document.getElementById("car-images").addEventListener("change", function(event) {
-      const files = event.target.files;
-      if (files.length > 10) {
-        alert("You can only upload up to 10 images.");
-        event.target.value = "";  // Clear the input
-      }
-    });
+    try {
+        // Send data to the backend API
+        const response = await fetch('/api/add-car', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert('Car added successfully!');
+            clearForm(); // Clear the form fields
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Something went wrong while adding the car.');
+    }
+});
+
   </script>
 </body>
 </html>

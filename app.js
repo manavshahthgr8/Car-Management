@@ -5,6 +5,16 @@ const path = require('path');
 const app = express();
 const PORT = 5000;
 
+
+const bodyParser = require('body-parser');
+const addCarRoutes = require('./backend/routes/auth'); // Adjust the path if needed
+
+// Middleware
+
+app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads')); // Serve uploaded files
+app.use('/api', addCarRoutes); // Map `/api` to addCarRoutes
+
 // Middleware
 app.use(express.json());
 app.use(cors());

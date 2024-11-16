@@ -192,6 +192,21 @@
   </div>
 
   <script>
+    function getUserData() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    }
+    window.onload =getUserData;
+
+     // Update the header with the username
+   window.onload = function() {
+   const username = localStorage.getItem('username');
+  if (username) {
+    document.getElementById('username').innerText = `Hi ${username}!`;
+  } else {
+    document.getElementById('username').innerText = 'Hi User!';
+  }
+};
     let cars = [
       { id: 1, name: 'Toyota Corolla', type: 'Sedan', description: 'A reliable and efficient car.', dealer: 'Dealer A', fuel: 'Petrol', images: ['https://via.placeholder.com/600'] },
       { id: 2, name: 'Tesla Model 3', type: 'Electric', description: 'An all-electric sedan with advanced features.', dealer: 'Dealer B', fuel: 'Electric', images: ['https://via.placeholder.com/600'] },
@@ -269,10 +284,17 @@
       window.location.href = 'product-create.html';
     }
 
-    function logout() {
-      alert('Logging out...');
-      window.location.href = 'index.html';
-    }
+   
+   
+
+// Logout function
+function logout() {
+  alert('Logging out...');
+  localStorage.removeItem('username');
+  localStorage.removeItem('token');
+  window.location.href = 'index.html';  // Redirect to login page
+}
+
 
     renderCarList();
   </script>

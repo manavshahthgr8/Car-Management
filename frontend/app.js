@@ -24,6 +24,8 @@ async function loginUser(event) {
         // On successful login
         alert('Login successful!');
         localStorage.setItem('token', data.token);  // Save JWT token to local storage
+        localStorage.setItem('username', data.name);
+        localStorage.setItem('uid',data.userId);
         window.location.href = '/product-list.html';  // Redirect to home/dashboard page
       } else {
         // If login fails
