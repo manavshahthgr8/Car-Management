@@ -112,8 +112,8 @@
       background-color: darkred;
     }
 
-    /* Modal Styles */
-    .modal {
+     /* Modal Styles */
+     .modal {
       display: none;
       position: fixed;
       top: 0;
@@ -135,16 +135,23 @@
       position: relative;
     }
 
-    .modal-content h2 {
-      margin: 0;
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
     }
 
     .carousel img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 5px;
-    }
+  width: auto;
+  height: 200px;
+  max-width: 100%;
+  object-fit: contain; /* Ensures the entire image fits without distortion */
+  border-radius: 5px;
+}
+
 
     .modal-close {
       position: absolute;
@@ -182,6 +189,9 @@
       <span class="modal-close" onclick="closeModal()">&times;</span>
       <div class="carousel">
         <img id="modal-image" src="" alt="Car Image">
+        <button id="prev-button" onclick="prevImage()" style="display:none;">&#8249; Previous</button>
+        <button id="next-button" onclick="nextImage()" style="display:none;">Next &#8250;</button>
+        
       </div>
       <h2 id="modal-title">Car Name</h2>
       <p id="modal-description">Description</p>
@@ -190,113 +200,278 @@
       <p><strong>Fuel:</strong> <span id="modal-fuel"></span></p>
     </div>
   </div>
+  
+
 
   <script>
+    let cars = []; // Global variable to store fetched cars
+  
+    // Get user data and update the UI on page load
+    window.onload = async function () {
+      getUserData(); // Initialize user data
+  
+      const username = localStorage.getItem('username');
+      if (username) {
+        document.getElementById('username').innerText = `Hi ${username}!`;
+      } else {
+        document.getElementById('username').innerText = 'Hi User!';
+      }
+  
+      await fetchCars(); // Fetch and render cars
+    };
+  
+    // Fetch user data from localStorage
     function getUserData() {
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
+      const token = localStorage.getItem('token');
+      const username = localStorage.getItem('username');
+      const userId = localStorage.getItem('uid');
+  
+      if (!userId) {
+        alert("User not logged in. Redirecting to login page...");
+        window.location.href = "index.html"; // Redirect to login
+      }
     }
-    window.onload =getUserData;
+  
+    // Fetch the cars list for the logged-in user
+    async function fetchCars() {
+      const userId = localStorage.getItem('uid');
+      if (!userId) {
+        alert('User is not logged in!');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`/api/cars?user_id=${userId}`);
+        const data = await response.json();
+        console.log('Fetched Data:', data);
+  
+        if (response.ok && Array.isArray(data)) {
+          cars = data; // Update global array
+          renderCarList(cars); // Render the fetched cars
+        } else {
+          console.error('Unexpected response structure:', data);
+          alert('Failed to fetch cars.');
+        }
+      } catch (error) {
+        console.error('Error fetching cars:', error);
+        alert('Something went wrong while fetching the car list.');
+      }
+    }
+  
+    // Render the car list dynamically
+    function renderCarList(cars) {
+  const carList = document.getElementById('car-list');
+  carList.innerHTML = ''; // Clear existing content
 
-     // Update the header with the username
-   window.onload = function() {
-   const username = localStorage.getItem('username');
-  if (username) {
-    document.getElementById('username').innerText = `Hi ${username}!`;
-  } else {
-    document.getElementById('username').innerText = 'Hi User!';
+  if (!Array.isArray(cars) || cars.length === 0) {
+    carList.innerHTML = '<p>No cars available.</p>';
+    return;
   }
-};
-    let cars = [
-      { id: 1, name: 'Toyota Corolla', type: 'Sedan', description: 'A reliable and efficient car.', dealer: 'Dealer A', fuel: 'Petrol', images: ['https://via.placeholder.com/600'] },
-      { id: 2, name: 'Tesla Model 3', type: 'Electric', description: 'An all-electric sedan with advanced features.', dealer: 'Dealer B', fuel: 'Electric', images: ['https://via.placeholder.com/600'] },
-      { id: 3, name: 'Ford F-150', type: 'Truck', description: 'A powerful and durable truck.', dealer: 'Dealer C', fuel: 'Diesel', images: ['https://via.placeholder.com/600'] }
-    ];
 
-    function renderCarList() {
-      const carList = document.getElementById('car-list');
-      carList.innerHTML = '';
-      cars.forEach(car => {
-        carList.innerHTML += `
-          <div class="card">
-            <h3>${car.name}</h3>
-            <p>${car.type}</p>
-            <button class="add-button" onclick="viewCar(${car.id})">View</button>
-            <button class="delete-button" onclick="confirmDelete(${car.id})">Delete</button>
-          </div>
-        `;
-      });
+  cars.forEach(car => {
+    const firstImage = car.image_url_1 ? car.image_url_1 : "placeholder.jpg"; // Use first image or placeholder
+    const carCard = document.createElement('div');
+    carCard.classList.add('card');
+    carCard.innerHTML = `
+      <img src="${firstImage}" alt="${car.car_name}" style="width: 100%; height: 150px; object-fit: contain;">
+      <h3>${car.car_name}</h3>
+      <p>Type: ${car.car_type}</p>
+      <p>Dealer: ${car.dealer_name}</p>
+      <button class="add-button" onclick="viewCar(${car.car_id})">View</button>
+      <button class="delete-button" onclick="confirmDelete(${car.car_id})">Delete</button>
+    `;
+    carList.appendChild(carCard);
+  });
+}
+
+  
+    // View car details in the modal
+    let currentImageIndex = 0;
+let currentImages = []; // Array to hold the images of the selected car
+
+function viewCar(id) {
+  const car = cars.find(car => car.car_id === id);
+  if (car) {
+    document.getElementById('modal-title').innerText = car.car_name;
+    document.getElementById('modal-description').innerText = car.description || "No description available.";
+    document.getElementById('modal-type').innerText = car.car_type;
+    document.getElementById('modal-dealer').innerText = car.dealer_name;
+    document.getElementById('modal-fuel').innerText = car.fuel_type || "Unknown fuel type";
+
+    // Collect all image URLs from the car object
+    currentImages = [
+      car.image_url_1,
+      car.image_url_2,
+      car.image_url_3,
+      car.image_url_4,
+      car.image_url_5,
+      car.image_url_6,
+      car.image_url_7,
+      car.image_url_8,
+      car.image_url_9,
+      car.image_url_10
+    ].filter(Boolean); // Remove null/undefined values
+
+    currentImageIndex = 0; // Reset to the first image
+
+    if (currentImages.length > 0) {
+      document.getElementById('modal-image').src = currentImages[currentImageIndex];
+      toggleCarouselButtons();
+    } else {
+      document.getElementById('modal-image').src = "placeholder.jpg"; // Fallback if no images
+      document.getElementById('prev-button').style.display = 'none';
+      document.getElementById('next-button').style.display = 'none';
     }
 
+    // Show the modal
+    document.getElementById('car-modal').style.display = 'flex';
+  }
+}
+let autoSlideInterval;
+
+function viewCar(id) {
+  const car = cars.find(car => car.car_id === id);
+  if (car) {
+    document.getElementById('modal-title').innerText = car.car_name;
+    document.getElementById('modal-description').innerText = car.description || "No description available.";
+    document.getElementById('modal-type').innerText = car.car_type;
+    document.getElementById('modal-dealer').innerText = car.dealer_name;
+    document.getElementById('modal-fuel').innerText = car.fuel_type || "Unknown fuel type";
+
+    // Collect all image URLs
+    currentImages = [
+      car.image_url_1,
+      car.image_url_2,
+      car.image_url_3,
+      car.image_url_4,
+      car.image_url_5,
+      car.image_url_6,
+      car.image_url_7,
+      car.image_url_8,
+      car.image_url_9,
+      car.image_url_10
+    ].filter(Boolean);
+
+    currentImageIndex = 0; // Reset index
+
+    if (currentImages.length > 0) {
+      document.getElementById('modal-image').src = currentImages[currentImageIndex];
+      toggleCarouselButtons();
+    } else {
+      document.getElementById('modal-image').src = "placeholder.jpg"; // Fallback image
+      document.getElementById('prev-button').style.display = 'none';
+      document.getElementById('next-button').style.display = 'none';
+    }
+
+    // Start auto-slide
+    clearInterval(autoSlideInterval);
+    autoSlideInterval = setInterval(nextImage, 3000);
+
+    // Show modal
+    document.getElementById('car-modal').style.display = 'flex';
+  }
+}
+
+function closeModal() {
+  document.getElementById('car-modal').style.display = 'none';
+  clearInterval(autoSlideInterval); // Stop auto-slide
+}
+
+
+function closeModal() {
+  document.getElementById('car-modal').style.display = 'none';
+}
+
+
+function nextImage() {
+  currentImageIndex = (currentImageIndex + 1) % currentImages.length; // Loop back to the start
+  document.getElementById('modal-image').src = currentImages[currentImageIndex];
+}
+
+function prevImage() {
+  currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length; // Loop back to the end
+  document.getElementById('modal-image').src = currentImages[currentImageIndex];
+}
+
+
+function toggleCarouselButtons() {
+  document.getElementById('prev-button').style.display = currentImageIndex > 0 ? 'inline' : 'none';
+  document.getElementById('next-button').style.display = currentImageIndex < currentImages.length - 1 ? 'inline' : 'none';
+}
+
+    // Close the modal
+    function closeModal() {
+      document.getElementById('car-modal').style.display = 'none';
+    }
+  
+    // Confirm deletion of a car
     function confirmDelete(id) {
       const confirmation = confirm('Are you sure you want to delete this car?');
       if (confirmation) {
         deleteCar(id);
       }
     }
+  
+    // Delete a car and update the list
+    async function deleteCar(id) {
+  const token = localStorage.getItem('token'); // Get token from localStorage
 
-    function deleteCar(id) {
-      cars = cars.filter(car => car.id !== id);
+  if (!token) {
+    alert('You are not authorized. Please log in again.');
+    window.location.href = 'index.html'; // Redirect to login page
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/cars/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include token in headers
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
       alert('Car deleted successfully!');
-      renderCarList();
+      cars = cars.filter(car => car.car_id !== id); // Remove from global array
+      renderCarList(cars); // Re-render the car list
+    } else {
+      const errorData = await response.json();
+      console.error('Error:', errorData);
+      alert(`Failed to delete the car: ${errorData.message || 'Unknown error'}`);
     }
+  } catch (error) {
+    console.error('Error deleting car:', error);
+    alert('Something went wrong while deleting the car.');
+  }
+}
 
-    function viewCar(id) {
-      const car = cars.find(car => car.id === id);
-      if (car) {
-        document.getElementById('modal-title').innerText = car.name;
-        document.getElementById('modal-description').innerText = car.description;
-        document.getElementById('modal-type').innerText = car.type;
-        document.getElementById('modal-dealer').innerText = car.dealer;
-        document.getElementById('modal-fuel').innerText = car.fuel;
-        document.getElementById('modal-image').src = car.images[0];
-        document.getElementById('car-modal').style.display = 'flex';
-      }
-    }
 
-    function closeModal() {
-      document.getElementById('car-modal').style.display = 'none';
-    }
-
+  
+    // Search cars by name or type
     function searchCars() {
       const query = document.getElementById('search-bar').value.toLowerCase();
-      const filteredCars = cars.filter(car => car.name.toLowerCase().includes(query) || car.type.toLowerCase().includes(query));
-      renderFilteredCarList(filteredCars);
+      const filteredCars = cars.filter(car =>
+        car.car_name.toLowerCase().includes(query) ||
+        car.car_type.toLowerCase().includes(query)
+      );
+      renderCarList(filteredCars); // Render the filtered list
     }
-
-    function renderFilteredCarList(filteredCars) {
-      const carList = document.getElementById('car-list');
-      carList.innerHTML = '';
-      filteredCars.forEach(car => {
-        carList.innerHTML += `
-          <div class="card">
-            <h3>${car.name}</h3>
-            <p>${car.type}</p>
-            <button onclick="viewCar(${car.id})">View</button>
-            <button class="delete-button" onclick="confirmDelete(${car.id})">Delete</button>
-          </div>
-        `;
-      });
-    }
-
+  
+    // Redirect to the add car page
     function addCar() {
       alert('Redirecting to add car form...');
       window.location.href = 'product-create.html';
     }
-
-   
-   
-
-// Logout function
-function logout() {
-  alert('Logging out...');
-  localStorage.removeItem('username');
-  localStorage.removeItem('token');
-  window.location.href = 'index.html';  // Redirect to login page
-}
-
-
-    renderCarList();
+  
+    // Logout function
+    function logout() {
+      alert('Logging out...');
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+      window.location.href = 'index.html'; // Redirect to login page
+    }
   </script>
+  
 </body>
 </html>

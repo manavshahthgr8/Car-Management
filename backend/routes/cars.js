@@ -32,13 +32,29 @@ router.post("/", authenticate, (req, res) => {
   );
 });
 
-// Get All Cars for User
+// Route to fetch cars added by the logged-in user
 router.get("/", authenticate, (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId;  // Get userId from the token (which was decoded)
 
-  db.query("SELECT * FROM cars WHERE user_id = ?", [userId], (err, results) => {
+  db.query(
+    "SELECT * FROM cars WHERE user_id = ?",
+    [userId],
+    (err, results) => {
+      if (err) return res.status(500).send("Server error");
+      res.json(results);  // Send back the list of cars for the logged-in user
+    }
+  );
+});
+
+// Optional: Route to delete a car (if required)
+router.delete("/:id", authenticate, (req, res) => {
+  const carId = req.params.id;
+  const userId = req.user.userId;
+
+  db.query("DELETE FROM cars WHERE car_id = ? AND user_id = ?", [carId, userId], (err, results) => {
     if (err) return res.status(500).send("Server error");
-    res.json(results);
+    if (results.affectedRows === 0) return res.status(404).send("Car not found or you're not authorized");
+    res.send("Car deleted successfully");
   });
 });
 
@@ -55,15 +71,6 @@ router.get("/:id", authenticate, (req, res) => {
 });
 
 // Delete Car
-router.delete("/:id", authenticate, (req, res) => {
-  const userId = req.user.id;
-  const carId = req.params.id;
 
-  db.query("DELETE FROM cars WHERE id = ? AND user_id = ?", [carId, userId], (err, results) => {
-    if (err) return res.status(500).send("Server error");
-    if (results.affectedRows === 0) return res.status(404).send("Car not found");
-    res.send("Car deleted successfully");
-  });
-});
 
 module.exports = router;
