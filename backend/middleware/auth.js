@@ -1,19 +1,15 @@
-const authenticate = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    console.log("Missing Authorization header");
-    return res.status(401).send("Missing Authorization header");
-  }
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-  const token = authHeader.split(" ")[1];  // Extract token from the header
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);  // Use JWT_SECRET here
-    console.log("Decoded Token:", decoded); // Log decoded token
+function authenticateToken(req, res, next) {
+  const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
-    req.user = decoded; // Make the decoded user available to the route handlers
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Forbidden' });
+    req.user = user;
     next();
-  } catch (err) {
-    console.error("Token verification error:", err.message);
-    return res.status(401).send("Invalid or expired token");
-  }
-};
+  });
+}
+
+module.exports = authenticateToken;
