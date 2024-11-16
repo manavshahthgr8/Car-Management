@@ -1,4 +1,5 @@
 # **Car Inventory Management System**
+Demo video & images attached at last
 
 ## **Overview**
 This project is a **Car Inventory Management System**  | for assignment. It includes user authentication, car listing, and the ability to add, view, and manage car details. The frontend is built with HTML, CSS, and JavaScript, while the backend uses Node.js with Express, providing robust APIs for all functionalities.
