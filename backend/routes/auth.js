@@ -136,8 +136,6 @@ router.get('/cars', async (req, res) => {
   try {
     // Extract the user_id from query or token (if using authentication)
     const user_id = req.query.user_id;
-<<<<<<< HEAD
-=======
 
     if (!user_id) {
       return res.status(400).json({ error: 'User ID is required' });
@@ -151,21 +149,6 @@ router.get('/cars', async (req, res) => {
   }
 });
 
-
-
->>>>>>> 042baf74f6e9009a96e37c814180fa7235304dfe
-
-    if (!user_id) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
-
-    const [rows] = await pool.query('SELECT * FROM cars WHERE user_id = ?', [user_id]);
-    res.status(200).json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to fetch cars' });
-  }
-});
 
 
 
