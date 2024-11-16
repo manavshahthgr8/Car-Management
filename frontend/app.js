@@ -35,7 +35,7 @@ async function loginUser(event) {
       }
     } catch (error) {
       console.error('Login Error:', error);
-      document.getElementById('error-message').innerText = 'Server is offline | Databse not connected. Please download & run on local host';
+      document.getElementById('error-message').innerText = 'Server is offline | use localhost to run as AWS/ cloud databse not connected';
       document.getElementById('error-message').style.display = 'block';
     }
   }
